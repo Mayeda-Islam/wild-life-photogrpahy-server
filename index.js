@@ -45,14 +45,14 @@ async function run() {
         query = { serviceId: id };
       }
       if (email) {
-        query = { reviewBy: email};
+        query = { reviewBy: email };
       }
       console.log(email);
 
       const cursor = reviewCollection.find(query);
       const review = await cursor.toArray();
       res.send(review);
-      console.log(review)
+      console.log(review);
     });
 
     app.get("/services/:id", async (req, res) => {
@@ -85,6 +85,15 @@ async function run() {
       res.send(result);
       console.log(result);
     });
+    // delete reviews:
+    app.delete("/reviews/:serviceId", async (req, res) => {
+      const id = req.params.serviceId;
+      console.log(id);
+      const query = { serviceId: id };
+      const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
+   
   } finally {
   }
 }
