@@ -22,9 +22,7 @@ async function run() {
       .db("serviceReviewer")
       .collection("services");
     const reviewCollection = client.db("serviceReviewer").collection("reviews");
-    const orderCollection = client
-      .db("serviceReviewer")
-      .collection("orders");
+    const orderCollection = client.db("serviceReviewer").collection("orders");
     app.get("/", async (req, res) => {
       const query = {};
       const cursor = servicesCollection.find(query);
@@ -40,18 +38,23 @@ async function run() {
     });
     app.get("/reviews", async (req, res) => {
       let query = {};
-      const id=req.query.serviceId
-      const email=req.query
-      console.log(email)
-      if(id){
-        query={serviceId:id}
-        
+      const id = req.query.serviceId;
+      const email = req.query.email;
+
+      if (id) {
+        query = { serviceId: id };
       }
+      if (email) {
+        query = { reviewBy: email};
+      }
+      console.log(email);
+
       const cursor = reviewCollection.find(query);
       const review = await cursor.toArray();
       res.send(review);
+      console.log(review)
     });
-    
+
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -65,23 +68,22 @@ async function run() {
     });
     app.get("/orders", async (req, res) => {
       let query = {};
-      
+
       if (req.query.email) {
         query = {
           email: req.query.email,
         };
-       
       }
       const cursor = orderCollection.find(query);
       const orders = await cursor.toArray();
       res.send(orders);
-      console.log(orders)
+      console.log(orders);
     });
     app.post("/orders", async (req, res) => {
-      const order=req.body
+      const order = req.body;
       const result = await orderCollection.insertOne(order);
       res.send(result);
-      console.log(result)
+      console.log(result);
     });
   } finally {
   }
