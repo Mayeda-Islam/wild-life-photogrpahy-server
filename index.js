@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId,  } = require("mongodb");
 
 const cors = require("cors");
 const app = express();
@@ -52,7 +52,6 @@ async function run() {
       const cursor = reviewCollection.find(query);
       const review = await cursor.toArray();
       res.send(review);
-      console.log(review);
     });
 
     app.get("/services/:id", async (req, res) => {
@@ -63,7 +62,8 @@ async function run() {
     });
     app.post("/reviews", async (req, res) => {
       const review = req.body;
-      const result = await reviewCollection.insertOne(review);
+      const insertDate=new Date()
+      const result = await reviewCollection.insertOne({...review,insertDate});
       res.send(result);
     });
     app.get("/orders", async (req, res) => {
@@ -83,17 +83,34 @@ async function run() {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
       res.send(result);
-      console.log(result);
     });
     // delete reviews:
-    app.delete("/reviews/:serviceId", async (req, res) => {
-      const id = req.params.serviceId;
-      console.log(id);
-      const query = { serviceId: id };
+    app.delete("/reviews/:reviewId", async (req, res) => {
+      const id = req.params.reviewId;
+      const query = { _id:ObjectId(id) };
       const result = await reviewCollection.deleteOne(query);
       res.send(result);
     });
-   
+    // update reviews
+    app.patch("/reviews/:updateId", async (req, res) => {
+      console.log('inside patch request')
+      const id = req.params.updateId;
+      console.log("patch id",id)
+      console.log(req.body)
+      
+      const query={_id:ObjectId(id)}
+      const updateDoc = {
+        $set: {
+          ...req.body,
+          insertDate:new Date(),
+
+        },
+      };
+      const result = await 
+      reviewCollection.updateOne(query,updateDoc);
+      res.send(result);
+      console.log(result)
+    });
   } finally {
   }
 }
