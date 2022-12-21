@@ -21,6 +21,7 @@ async function run() {
     const servicesCollection = client
       .db("serviceReviewer")
       .collection("services");
+      const blogCollection=client.db('serviceReviewer').collection("blogs");
     const reviewCollection = client.db("serviceReviewer").collection("reviews");
     const orderCollection = client.db("serviceReviewer").collection("orders");
     app.get("/", async (req, res) => {
@@ -93,9 +94,7 @@ async function run() {
     });
     // update reviews
     app.patch("/reviews/:updateId", async (req, res) => {
-      console.log('inside patch request')
       const id = req.params.updateId;
-      console.log("patch id",id)
       console.log(req.body)
       
       const query={_id:ObjectId(id)}
@@ -111,6 +110,13 @@ async function run() {
       res.send(result);
       console.log(result)
     });
+    // blogs api
+    app.get('/blogs',async(req,res)=>{
+      const query={}
+      const cursor=  blogCollection.find(query)
+       const blogs= await cursor.toArray()
+      res.send(blogs)
+    })
   } finally {
   }
 }
