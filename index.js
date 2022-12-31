@@ -172,7 +172,14 @@ async function run() {
 run().catch((error) => console.log(error));
 
 app.get("/", (req, res) => {
-  res.send("reviewing api is coming");
+  res.send({
+    status:true,
+    data:{
+      message:"welcome to wild life photography server",
+      author:"Mayeda Islam",
+      
+    }
+  });
 });
 
 app.listen(port, () => {
